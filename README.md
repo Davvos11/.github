@@ -26,4 +26,26 @@ jobs:
 Inputs: `app` (required), `context`, `dockerfile`, `k8s-dir` (default `k8s`), `rollout`
 (Deployments to wait for, default `app`), `rollout-timeout`, `runs-on` (default `zonnestralen`).
 
+**Private dependencies** (e.g. a private git dependency in `Cargo.toml`): pass a GitHub App with read access
+to those repos. The build gets a short-lived token as Docker build secret `github_token`:
+
+```yaml
+    with:
+      app: my-app
+      build-app-id: ${{ vars.MY_APP_ID }}
+      build-app-repositories: private-dep   # repos of the caller's owner, comma-separated
+    secrets:
+      build-app-private-key: ${{ secrets.MY_APP_PRIVATE_KEY }}
+```
+
+```dockerfile
+RUN --mount=type=secret,id=github_token,required=false \
+    export GIT_CONFIG_COUNT=1 \
+        GIT_CONFIG_KEY_0="url.https://x-access-token:$(cat /run/secrets/github_token)@github.com/.insteadOf" \
+        GIT_CONFIG_VALUE_0="https://github.com/" \
+    && <build>
+```
+
+Setting git's config through environment variables keeps the token out of the image layers and the build cache.
+
 Releases: tag `vX.Y.Z` and move the `v1` tag (`git tag -f v1 && git push -f origin v1`).

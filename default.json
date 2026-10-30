@@ -1,0 +1,70 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate config for Davvos11 repos deployed to zonnestralen, where merging to master deploys",
+  "extends": [
+    "config:recommended",
+    "docker:pinDigests"
+  ],
+  "osvVulnerabilityAlerts": true,
+  "platformAutomerge": false,
+  "ignoreTests": true,
+  "kubernetes": {
+    "managerFilePatterns": [
+      "/(^|/)k8s/.+\\.ya?ml$/"
+    ]
+  },
+  "packageRules": [
+    {
+      "description": "Version releases wait 3 days (security fixes don't); digest updates have no release date",
+      "matchUpdateTypes": [
+        "major",
+        "minor",
+        "patch"
+      ],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "matchUpdateTypes": [
+        "patch",
+        "digest",
+        "pin",
+        "pinDigest"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Majors only on request, from the Dependency Dashboard",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "One PR per repo for all minor updates (not merged automatically)",
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "groupName": "minor updates"
+    },
+    {
+      "description": "The app's own image: its tag is set by the deploy workflow",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/davvos11/**"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "nginx: stable releases only (even minor versions; odd ones are mainline)",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "nginx"
+      ],
+      "allowedVersions": "/^1\\.\\d*[02468]\\./"
+    }
+  ]
+}

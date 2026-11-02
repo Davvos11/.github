@@ -8,6 +8,13 @@
   "osvVulnerabilityAlerts": true,
   "platformAutomerge": false,
   "ignoreTests": true,
+  "timezone": "Europe/Amsterdam",
+  "schedule": [
+    "* 6-11 * * 6"
+  ],
+  "vulnerabilityAlerts": {
+    "automerge": true
+  },
   "kubernetes": {
     "managerFilePatterns": [
       "/(^|/)k8s/.+\\.ya?ml$/"
@@ -24,13 +31,23 @@
       "minimumReleaseAge": "3 days"
     },
     {
+      "description": "One automerged PR per repo per week for patch, digest and pin updates",
       "matchUpdateTypes": [
         "patch",
         "digest",
         "pin",
         "pinDigest"
       ],
+      "groupName": "safe updates",
+      "groupSlug": "safe",
       "automerge": true
+    },
+    {
+      "description": "One PR per repo per week for all minor updates (not merged automatically)",
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "groupName": "minor updates"
     },
     {
       "description": "Majors only on request, from the Dependency Dashboard",
@@ -38,13 +55,6 @@
         "major"
       ],
       "dependencyDashboardApproval": true
-    },
-    {
-      "description": "One PR per repo for all minor updates (not merged automatically)",
-      "matchUpdateTypes": [
-        "minor"
-      ],
-      "groupName": "minor updates"
     },
     {
       "description": "The app's own image: its tag is set by the deploy workflow",

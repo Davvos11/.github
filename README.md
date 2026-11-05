@@ -24,7 +24,9 @@ jobs:
 ```
 
 Inputs: `app` (required), `context`, `dockerfile`, `k8s-dir` (default `k8s`), `rollout`
-(Deployments to wait for, default `app`), `rollout-timeout`, `runs-on` (default `zonnestralen`).
+(Deployments to wait for, default `app`), `rollout-timeout`, `runs-on` (deploy job, default `zonnestralen`),
+`build-runs-on` (build job, default `ubuntu-latest`; needs Docker, e.g. `${{ vars.CI_RUNNER || 'ubuntu-latest' }}`
+for an org with the infra-tg org runners).
 
 **Private dependencies** (e.g. a private git dependency in `Cargo.toml`): pass a GitHub App with read access
 to those repos. The build gets a short-lived token as Docker build secret `github_token`:

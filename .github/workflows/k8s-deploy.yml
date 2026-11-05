@@ -1,7 +1,7 @@
 name: k8s build and deploy
 
 # Reusable workflow for apps on the zonnestralen k3s cluster (infra-tg).
-#   build:  GitHub-hosted runner, pushes ghcr.io/<owner>/<repo>:<sha>
+#   build:  `build-runs-on` (GitHub-hosted by default), pushes ghcr.io/<owner>/<repo>:<sha>
 #   deploy: the app repo's own ARC runner scale set; kubectl uses the runner pod's ServiceAccount
 #           (namespace-scoped), so no kubeconfig is stored in GitHub.
 # Both jobs only run on the default branch.
@@ -35,6 +35,10 @@ on:
         description: Label of the ARC runner scale set.
         type: string
         default: zonnestralen
+      build-runs-on:
+        description: Runner label of the build job; needs Docker (e.g. an org CI runner scale set with dind).
+        type: string
+        default: ubuntu-latest
       build-app-id:
         description: >-
           GitHub App with read access to private repos the build needs (e.g. git dependencies).
@@ -58,7 +62,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.build-runs-on }}
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     permissions:
       contents: read

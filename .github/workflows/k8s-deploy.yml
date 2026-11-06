@@ -79,7 +79,7 @@ jobs:
       # `RUN --mount=type=secret,id=github_token,required=false`.
       - id: build-token
         if: inputs.build-app-id != ''
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ inputs.build-app-id }}
           private-key: ${{ secrets.build-app-private-key }}
